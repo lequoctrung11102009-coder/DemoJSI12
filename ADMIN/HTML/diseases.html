@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#173f35">
+    <title>FARMCASTAdmin</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="admin-shell">
+        <!-- SIDEBAR CHUYỂN TRANG HTML -->
+        <aside class="sidebar" id="sidebar" aria-label="Điều hướng chính">
+            <a class="brand" href="index.html" aria-label="AgriAdmin">
+                <span class="brand-mark" aria-hidden="true">F</span>
+                <span><strong>FARMCAST</strong>Admin<small>Hệ thống quản trị</small></span>
+            </a>
+
+            <nav class="side-nav">
+                <p class="nav-label">Quản lý dữ liệu</p>
+                <a class="nav-item" href="index.html">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22V11m0 0C8.2 11 5 8 5 4c3.8 0 7 3 7 7Zm0 4c3.8 0 7-3 7-7-3.8 0-7 3-7 7Z"/></svg>
+                    <span>Cây trồng</span><span class="nav-count" id="crop-nav-count">—</span>
+                </a>
+                <a class="nav-item active" href="diseases.html">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8.5h8M9 4l1.2 2.5M15 4l-1.2 2.5M6 11H3m18 0h-3M6.5 15 4 17m13.5-2 2.5 2M12 7c3.3 0 6 2.7 6 6v2a6 6 0 0 1-12 0v-2c0-3.3 2.7-6 6-6Z"/></svg>
+                    <span>Sâu bệnh</span><span class="nav-count" id="disease-nav-count">—</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="system-status"><span></span><div><strong>Hệ thống hoạt động</strong><small>Dữ liệu đồng bộ Firestore</small></div></div>
+                <div class="admin-profile"><span class="avatar">AD</span><div><strong>Quản trị viên</strong><small>Administrator</small></div></div>
+            </div>
+        </aside>
+
+        <div class="workspace">
+            <header class="topbar">
+                <div class="topbar-leading">
+                    <div><p class="eyebrow">An toàn mùa vụ</p><h1>Quản lý sâu bệnh</h1></div>
+                </div>
+                <div class="topbar-actions">
+                    <span class="live-pill"><span></span> Trực tuyến</span>
+                    <span class="top-avatar">AD</span>
+                </div>
+            </header>
+
+            <main class="content">
+                <!-- KHU VỰC THỐNG KÊ -->
+                <div class="stats-grid disease-stats">
+                    <article class="stat-card blue"><div class="stat-icon">◎</div><div><span>Tổng sâu bệnh</span><strong id="disease-page-count">—</strong><small>trong cơ sở dữ liệu</small></div></article>
+                    <article class="stat-card red"><div class="stat-icon">!</div><div><span>Rủi ro cao</span><strong id="high-risk-count">—</strong><small>cần ưu tiên xử lý</small></div></article>
+                    <article class="stat-card green"><div class="stat-icon">✓</div><div><span>Có giải pháp</span><strong id="solution-count">—</strong><small>bản ghi đã hướng dẫn</small></div></article>
+                </div>
+
+                <!-- BẢNG DANH SÁCH CHIẾM TOÀN BỘ CHIỀU RỘNG -->
+                <section class="panel list-panel">
+                    <div class="panel-header">
+                        <div><h3>Danh sách sâu bệnh</h3><p>Dữ liệu rủi ro và giải pháp phòng trừ</p></div>
+                        <button type="button" id="new-disease-button" class="primary-button">+ Thêm sâu bệnh mới</button>
+                    </div>
+                    <div class="toolbar one-filter">
+                        <label class="search-field">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+                            <input type="search" id="disease-search" placeholder="Tìm tên, mã hoặc cây trồng...">
+                        </label>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="disease-table">
+                            <thead>
+                                <tr>
+                                    <th>Mã bệnh</th>
+                                    <th>Cây trồng</th>
+                                    <th>Tên sâu bệnh</th>
+                                    <th>Rủi ro</th>
+                                    <th>Giải pháp</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="disease-table-body">
+                                <tr><td colspan="6" class="empty-cell">Đang tải dữ liệu...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-footer"><p id="disease-total-text">Đang tải danh sách sâu bệnh...</p></div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- DIALOG BIỂU MẪU THÊM / SỬA -->
+    <dialog id="disease-dialog" class="form-dialog">
+        <div class="form-dialog-header">
+            <div><span class="form-kicker">Biểu mẫu</span><h3 id="disease-form-title">Thêm sâu bệnh</h3><p>Điền thông tin nhận diện và xử lý</p></div>
+            <button type="button" id="disease-dialog-close" class="dialog-close-btn" aria-label="Đóng">✕</button>
+        </div>
+        <div class="form-dialog-body">
+            <form id="disease-form">
+                <div class="form-group">
+                    <label for="disease-id">Mã bệnh <span class="required">*</span></label>
+                    <input type="text" id="disease-id" placeholder="Ví dụ: rice_blast" required>
+                </div>
+                <div class="form-group">
+                    <label for="disease-crop-id">Mã cây trồng <span class="required">*</span></label>
+                    <input type="text" id="disease-crop-id" placeholder="ID document cây trồng" list="crop-id-options" required>
+                    <datalist id="crop-id-options"></datalist>
+                    <small>Chọn hoặc nhập ID trong collection crops.</small>
+                </div>
+                <div class="form-group">
+                    <label for="disease-name">Tên sâu bệnh <span class="required">*</span></label>
+                    <input type="text" id="disease-name" placeholder="Ví dụ: Bệnh đạo ôn" required>
+                </div>
+                <div class="form-group">
+                    <label for="disease-risk">Mức độ rủi ro <span class="required">*</span></label>
+                    <select id="disease-risk" required>
+                        <option value="">Chọn mức độ</option>
+                        <option value="Low">Thấp</option>
+                        <option value="Medium">Trung bình</option>
+                        <option value="High">Cao</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="disease-solution">Giải pháp <span class="required">*</span></label>
+                    <textarea id="disease-solution" rows="4" placeholder="Nhập giải pháp xử lý..." required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" id="disease-save-button" class="primary-button">Lưu sâu bệnh</button>
+                    <button type="button" id="disease-cancel-button" class="secondary-button">Hủy</button>
+                </div>
+                <p id="disease-message" class="form-message" role="status"></p>
+            </form>
+        </div>
+    </dialog>
+
+    <script type="module" src="../JS/diseases.js"></script>
+</body>
+</html>

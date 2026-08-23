@@ -1,0 +1,3108 @@
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+    getFirestore,
+    collection,
+    doc,
+    writeBatch,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    // ======================================================
+    // 1. FIREBASE CONFIG
+    // ======================================================
+    
+    const firebaseConfig = {
+    apiKey: "AIzaSyAsl5Xj-J-A8b8Vu2A-yJw0U0KREXJgbcs",
+    authDomain: "weather-4f0fa.firebaseapp.com",
+    projectId: "weather-4f0fa",
+    storageBucket: "weather-4f0fa.firebasestorage.app",
+    messagingSenderId: "1011941555484",
+    appId: "1:1011941555484:web:e5cd0eacd6685747528ed9"
+};
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    
+    // ======================================================
+    // 2. CROP DATA
+    // ======================================================
+    
+    const cropCategories = [
+        {
+            id: "staple_crops",
+            name_vi: "Cây lương thực",
+            name_en: "Staple Crops",
+            description: "Các loại cây cung cấp nguồn lương thực chính."
+        },
+        {
+            id: "industrial_crops",
+            name_vi: "Cây công nghiệp",
+            name_en: "Industrial Crops",
+            description: "Các loại cây được trồng để chế biến hoặc xuất khẩu."
+        },
+        {
+            id: "tropical_fruits",
+            name_vi: "Cây ăn trái nhiệt đới",
+            name_en: "Tropical Fruit Crops",
+            description: "Các loại cây ăn trái phổ biến trong khí hậu nhiệt đới."
+        },
+        {
+            id: "vegetables",
+            name_vi: "Rau màu",
+            name_en: "Vegetables",
+            description: "Các loại rau và cây thực phẩm ngắn ngày."
+        },
+        {
+            id: "herbs",
+            name_vi: "Rau gia vị",
+            name_en: "Herbs",
+            description: "Các loại rau thơm và cây dùng làm gia vị."
+        },
+        {
+            id: "timber_trees",
+            name_vi: "Cây lấy gỗ",
+            name_en: "Timber Trees",
+            description: "Các loại cây lâm nghiệp được trồng để khai thác gỗ."
+        }
+    ];
+    
+   export const crops = [
+
+  // ==================================================
+// STAPLE CROPS
+// ==================================================
+
+{
+    id: "rice",
+    name_vi: "Lúa",
+    name_en: "Rice",
+    category_id: "staple_crops",
+    signature_countries: [
+        "Vietnam",
+        "Thailand",
+        "Japan",
+        "China",
+        "India",
+        "Indonesia",
+        "Philippines",
+        "Malaysia",
+        "Myanmar",
+        "Cambodia",
+        "Laos",
+        "Bangladesh",
+        "Pakistan",
+        "Sri Lanka",
+        "Nepal"
+    ]
+},
+{
+    id: "paddy_rice",
+    name_vi: "Lúa nước",
+    name_en: "Paddy rice",
+    category_id: "staple_crops",
+    signature_countries: [
+        "Vietnam",
+        "Thailand",
+        "Indonesia",
+        "Philippines",
+        "Cambodia",
+        "Myanmar",
+        "Laos"
+    ]
+},
+{
+    id: "maize",
+    name_vi: "Ngô",
+    name_en: "Maize",
+    alternative_names_en: ["Corn"],
+    category_id: "staple_crops",
+    signature_countries: [
+        "China",
+        "India",
+        "Indonesia",
+        "Nepal",
+        "Pakistan",
+        "Vietnam"
+    ]
+},
+{
+    id: "sweet_potato",
+    name_vi: "Khoai lang",
+    name_en: "Sweet potato",
+    category_id: "staple_crops",
+    signature_countries: [
+        "China",
+        "Japan",
+        "Vietnam",
+        "Indonesia",
+        "Philippines"
+    ]
+},
+{
+    id: "cassava",
+    name_vi: "Khoai mì",
+    alternative_names_vi: ["Sắn"],
+    name_en: "Cassava",
+    category_id: "staple_crops",
+    signature_countries: [
+        "Thailand",
+        "Vietnam",
+        "Indonesia",
+        "Cambodia"
+    ]
+},
+{
+    id: "potato",
+    name_vi: "Khoai tây",
+    name_en: "Potato",
+    category_id: "staple_crops",
+    signature_countries: [
+        "China",
+        "India",
+        "Pakistan",
+        "Nepal",
+        "Mongolia",
+        "Kazakhstan"
+    ]
+},
+{
+    id: "taro",
+    name_vi: "Khoai môn",
+    name_en: "Taro",
+    category_id: "staple_crops",
+    signature_countries: [
+        "Japan",
+        "China",
+        "Vietnam",
+        "Philippines"
+    ]
+},
+
+// ===== NEW STAPLE CROPS =====
+
+{
+    id: "wheat",
+    name_vi: "Lúa mì",
+    name_en: "Wheat",
+    category_id: "staple_crops",
+    signature_countries: [
+        "China",
+        "India",
+        "Pakistan",
+        "Kazakhstan",
+        "Uzbekistan"
+    ]
+},
+{
+    id: "barley",
+    name_vi: "Lúa mạch",
+    name_en: "Barley",
+    category_id: "staple_crops",
+    signature_countries: [
+        "Mongolia",
+        "Kazakhstan",
+        "China"
+    ]
+},
+{
+    id: "buckwheat",
+    name_vi: "Kiều mạch",
+    name_en: "Buckwheat",
+    category_id: "staple_crops",
+    signature_countries: [
+        "Japan",
+        "China",
+        "Nepal"
+    ]
+},
+{
+    id: "millet",
+    name_vi: "Kê",
+    name_en: "Millet",
+    category_id: "staple_crops",
+    signature_countries: [
+        "India",
+        "Nepal",
+        "China"
+    ]
+},
+{
+    id: "sorghum",
+    name_vi: "Cao lương",
+    name_en: "Sorghum",
+    category_id: "staple_crops",
+    signature_countries: [
+        "India",
+        "China"
+    ]
+},
+{
+    id: "oat",
+    name_vi: "Yến mạch",
+    name_en: "Oat",
+    category_id: "staple_crops",
+    signature_countries: [
+        "China",
+        "Mongolia"
+    ]
+},
+// ==================================================
+// TROPICAL FRUIT CROPS
+// ==================================================
+
+{
+    id: "dragon_fruit",
+    name_vi: "Thanh long",
+    name_en: "Dragon fruit",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Vietnam",
+        "Thailand"
+    ]
+},
+{
+    id: "mango",
+    name_vi: "Xoài",
+    name_en: "Mango",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "India",
+        "Pakistan",
+        "Thailand",
+        "Philippines",
+        "Vietnam",
+        "Bangladesh"
+    ]
+},
+{
+    id: "banana",
+    name_vi: "Chuối",
+    name_en: "Banana",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Philippines",
+        "India",
+        "Indonesia",
+        "Vietnam",
+        "Thailand",
+        "Malaysia"
+    ]
+},
+{
+    id: "jackfruit",
+    name_vi: "Mít",
+    name_en: "Jackfruit",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Bangladesh",
+        "India",
+        "Vietnam",
+        "Thailand"
+    ]
+},
+{
+    id: "durian",
+    name_vi: "Sầu riêng",
+    name_en: "Durian",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Thailand",
+        "Malaysia",
+        "Indonesia",
+        "Vietnam"
+    ]
+},
+{
+    id: "pomelo",
+    name_vi: "Bưởi",
+    name_en: "Pomelo",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Vietnam",
+        "China",
+        "Thailand"
+    ]
+},
+{
+    id: "orange",
+    name_vi: "Cam",
+    name_en: "Orange",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "China",
+        "Japan",
+        "Israel"
+    ]
+},
+{
+    id: "mandarin",
+    name_vi: "Quýt",
+    name_en: "Mandarin",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "China",
+        "Japan",
+        "Korea"
+    ]
+},
+{
+    id: "lime",
+    name_vi: "Chanh",
+    name_en: "Lime",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "India",
+        "Vietnam",
+        "Thailand"
+    ]
+},
+{
+    id: "passion_fruit",
+    name_vi: "Chanh dây",
+    name_en: "Passion fruit",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Vietnam",
+        "Indonesia"
+    ]
+},
+{
+    id: "lychee",
+    name_vi: "Vải",
+    name_en: "Lychee",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "China",
+        "Vietnam"
+    ]
+},
+{
+    id: "longan",
+    name_vi: "Nhãn",
+    name_en: "Longan",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Thailand",
+        "Vietnam",
+        "China"
+    ]
+},
+{
+    id: "rambutan",
+    name_vi: "Chôm chôm",
+    name_en: "Rambutan",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Malaysia",
+        "Indonesia",
+        "Thailand"
+    ]
+},
+{
+    id: "mangosteen",
+    name_vi: "Măng cụt",
+    name_en: "Mangosteen",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Thailand",
+        "Malaysia",
+        "Indonesia"
+    ]
+},
+{
+    id: "pineapple",
+    name_vi: "Dứa",
+    alternative_names_vi: ["Thơm", "Khóm"],
+    name_en: "Pineapple",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Philippines",
+        "Thailand",
+        "Indonesia",
+        "Vietnam"
+    ]
+},
+{
+    id: "papaya",
+    name_vi: "Đu đủ",
+    name_en: "Papaya",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "India",
+        "Philippines",
+        "Thailand",
+        "Vietnam"
+    ]
+},
+{
+    id: "guava",
+    name_vi: "Ổi",
+    name_en: "Guava",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "India",
+        "Thailand",
+        "Vietnam"
+    ]
+},
+{
+    id: "sugar_apple",
+    name_vi: "Na",
+    alternative_names_vi: ["Mãng cầu ta"],
+    name_en: "Sugar Apple",
+    alternative_names_en: ["Custard Apple"],
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "India",
+        "Thailand",
+        "Vietnam"
+    ]
+},
+{
+    id: "wax_apple",
+    name_vi: "Mận miền Nam",
+    alternative_names_vi: ["Roi"],
+    name_en: "Wax Apple",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Malaysia",
+        "Thailand",
+        "Indonesia"
+    ]
+},
+{
+    id: "tamarind",
+    name_vi: "Me",
+    name_en: "Tamarind",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "India",
+        "Thailand"
+    ]
+},
+{
+    id: "ambarella",
+    name_vi: "Cóc",
+    name_en: "Ambarella",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Thailand",
+        "Indonesia"
+    ]
+},
+{
+    id: "star_fruit",
+    name_vi: "Khế",
+    name_en: "Star Fruit",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Malaysia",
+        "Indonesia",
+        "Vietnam"
+    ]
+},
+{
+    id: "sapodilla",
+    name_vi: "Sapôchê",
+    alternative_names_vi: ["Hồng xiêm"],
+    name_en: "Sapodilla",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "India",
+        "Thailand"
+    ]
+},
+{
+    id: "avocado",
+    name_vi: "Bơ",
+    name_en: "Avocado",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Israel",
+        "Vietnam"
+    ]
+},
+
+// ==================== JAPAN ====================
+
+{
+    id: "yuzu",
+    name_vi: "Cam Yuzu",
+    name_en: "Yuzu",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Japan",
+        "China",
+        "Korea"
+    ]
+},
+{
+    id: "japanese_persimmon",
+    name_vi: "Hồng Nhật",
+    name_en: "Japanese Persimmon",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Japan"
+    ]
+},
+{
+    id: "japanese_pear",
+    name_vi: "Lê Nhật",
+    name_en: "Japanese Pear",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Japan"
+    ]
+},
+{
+    id: "mikan",
+    name_vi: "Quýt Mikan",
+    name_en: "Mikan",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Japan"
+    ]
+},
+
+// ==================== KOREA ====================
+
+{
+    id: "korean_pear",
+    name_vi: "Lê Hàn Quốc",
+    name_en: "Korean Pear",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Korea"
+    ]
+},
+{
+    id: "jujube",
+    name_vi: "Táo tàu",
+    name_en: "Jujube",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Korea",
+        "China"
+    ]
+},
+
+// ==================== CHINA ====================
+
+{
+    id: "goji_berry",
+    name_vi: "Kỷ tử",
+    name_en: "Goji Berry",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "China"
+    ]
+},
+{
+    id: "loquat",
+    name_vi: "Sơn tra Nhật",
+    name_en: "Loquat",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "China",
+        "Japan"
+    ]
+},
+
+// ==================== CENTRAL ASIA ====================
+
+{
+    id: "grape",
+    name_vi: "Nho",
+    name_en: "Grape",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Uzbekistan",
+        "Iran"
+    ]
+},
+{
+    id: "melon",
+    name_vi: "Dưa lưới",
+    name_en: "Melon",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Uzbekistan",
+        "Kazakhstan"
+    ]
+},
+{
+    id: "pomegranate",
+    name_vi: "Lựu",
+    name_en: "Pomegranate",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Iran"
+    ]
+},
+{
+    id: "pistachio",
+    name_vi: "Hồ trăn",
+    name_en: "Pistachio",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Iran"
+    ]
+},
+{
+    id: "apricot",
+    name_vi: "Mơ",
+    name_en: "Apricot",
+    category_id: "tropical_fruits",
+    signature_countries: [
+        "Kazakhstan",
+        "Uzbekistan"
+    ]
+},
+
+// ==================================================
+// NEW INDUSTRIAL CROPS
+// ==================================================
+
+{
+    id: "oil_palm",
+    name_vi: "Cọ dầu",
+    name_en: "Oil Palm",
+    category_id: "industrial_crops",
+    signature_countries: [
+        "Malaysia",
+        "Indonesia"
+    ]
+},
+{
+    id: "clove",
+    name_vi: "Đinh hương",
+    name_en: "Clove",
+    category_id: "industrial_crops",
+    signature_countries: [
+        "Indonesia"
+    ]
+},
+{
+    id: "nutmeg",
+    name_vi: "Nhục đậu khấu",
+    name_en: "Nutmeg",
+    category_id: "industrial_crops",
+    signature_countries: [
+        "Indonesia"
+    ]
+},
+{
+    id: "cinnamon",
+    name_vi: "Quế",
+    name_en: "Cinnamon",
+    category_id: "industrial_crops",
+    signature_countries: [
+        "Sri Lanka",
+        "Vietnam",
+        "Indonesia"
+    ]
+},
+{
+    id: "cardamom",
+    name_vi: "Bạch đậu khấu",
+    name_en: "Cardamom",
+    category_id: "industrial_crops",
+    signature_countries: [
+        "India",
+        "Nepal"
+    ]
+},
+{
+    id: "sesame",
+    name_vi: "Mè",
+    name_en: "Sesame",
+    category_id: "industrial_crops",
+    signature_countries: [
+        "Myanmar",
+        "India"
+    ]
+},
+{
+    id: "jute",
+    name_vi: "Đay",
+    name_en: "Jute",
+    category_id: "industrial_crops",
+    signature_countries: [
+        "Bangladesh",
+        "India"
+    ]
+},
+{
+    id: "saffron",
+    name_vi: "Nghệ tây",
+    name_en: "Saffron",
+    category_id: "industrial_crops",
+    signature_countries: [
+        "Iran"
+    ]
+},
+{
+    id: "date_palm",
+    name_vi: "Chà là",
+    name_en: "Date Palm",
+    category_id: "industrial_crops",
+    signature_countries: [
+        "Saudi Arabia",
+        "Iran",
+        "Israel",
+        "United Arab Emirates",
+        "Oman"
+    ]
+},
+{
+    id: "olive",
+    name_vi: "Ô liu",
+    name_en: "Olive",
+    category_id: "industrial_crops",
+    signature_countries: [
+        "Israel"
+    ]
+},
+{
+    id: "vanilla",
+    name_vi: "Va ni",
+    name_en: "Vanilla",
+    category_id: "industrial_crops",
+    signature_countries: [
+        "Indonesia"
+    ]
+},
+{
+    id: "areca_nut",
+    name_vi: "Cau",
+    name_en: "Areca Nut",
+    category_id: "industrial_crops",
+    signature_countries: [
+        "India",
+        "Bangladesh"
+    ]
+},
+{
+    id: "betel_leaf",
+    name_vi: "Lá trầu",
+    name_en: "Betel Leaf",
+    category_id: "industrial_crops",
+    signature_countries: [
+        "India",
+        "Bangladesh",
+        "Sri Lanka"
+    ]
+},
+{
+    id: "hemp",
+    name_vi: "Cây gai dầu",
+    name_en: "Hemp",
+    category_id: "industrial_crops",
+    signature_countries: [
+        "China"
+    ]
+},
+{
+    id: "ramie",
+    name_vi: "Cây gai",
+    name_en: "Ramie",
+    category_id: "industrial_crops",
+    signature_countries: [
+        "China"
+    ]
+}
+    ];
+    
+    
+    const agricultureTerms = [
+        {
+            id: "crop",
+            term_en: "Crop",
+            meaning_vi: "Cây trồng"
+        },
+        {
+            id: "plantation",
+            term_en: "Plantation",
+            meaning_vi: "Đồn điền hoặc vùng trồng"
+        },
+        {
+            id: "orchard",
+            term_en: "Orchard",
+            meaning_vi: "Vườn cây ăn trái"
+        },
+        {
+            id: "paddy_field",
+            term_en: "Paddy field",
+            meaning_vi: "Ruộng lúa nước"
+        },
+        {
+            id: "rice_field",
+            term_en: "Rice field",
+            meaning_vi: "Cánh đồng lúa"
+        },
+        {
+            id: "plantation_crop",
+            term_en: "Plantation crop",
+            meaning_vi: "Cây công nghiệp"
+        },
+        {
+            id: "fruit_tree",
+            term_en: "Fruit tree",
+            meaning_vi: "Cây ăn quả"
+        },
+        {
+            id: "cash_crop",
+            term_en: "Cash crop",
+            meaning_vi: "Cây trồng thương mại"
+        },
+        {
+            id: "perennial_crop",
+            term_en: "Perennial crop",
+            meaning_vi: "Cây lâu năm"
+        },
+        {
+            id: "annual_crop",
+            term_en: "Annual crop",
+            meaning_vi: "Cây hằng năm"
+        },
+        {
+            id: "harvest",
+            term_en: "Harvest",
+            meaning_vi: "Thu hoạch"
+        },
+        {
+            id: "cultivation",
+            term_en: "Cultivation",
+            meaning_vi: "Canh tác"
+        },
+        {
+            id: "irrigation",
+            term_en: "Irrigation",
+            meaning_vi: "Tưới tiêu"
+        },
+        {
+            id: "fertilizer",
+            term_en: "Fertilizer",
+            meaning_vi: "Phân bón"
+        },
+        {
+            id: "pesticide",
+            term_en: "Pesticide",
+            meaning_vi: "Thuốc bảo vệ thực vật"
+        },
+        {
+            id: "seedling",
+            term_en: "Seedling",
+            meaning_vi: "Cây giống"
+        },
+        {
+            id: "yield",
+            term_en: "Yield",
+            meaning_vi: "Năng suất"
+        },
+        {
+            id: "crop_disease",
+            term_en: "Crop disease",
+            meaning_vi: "Bệnh cây trồng"
+        },
+        {
+            id: "pest",
+            term_en: "Pest",
+            meaning_vi: "Sâu hại"
+        },
+        {
+            id: "soil_fertility",
+            term_en: "Soil fertility",
+            meaning_vi: "Độ phì nhiêu của đất"
+        }
+    ];
+    // ======================================================
+    // RECOMMENDATIONS
+    // ======================================================
+   const recommendations = [
+
+    // ===========================
+    // VIETNAM
+    // ===========================
+
+    {
+        country: "Vietnam",
+        content: "Reduce irrigation when humidity is high."
+    },
+    {
+        country: "Vietnam",
+        content: "Water crops early in the morning."
+    },
+    {
+        country: "Vietnam",
+        content: "Apply organic fertilizer every 30 days."
+    },
+    {
+        country: "Vietnam",
+        content: "Monitor soil moisture before watering."
+    },
+    {
+        country: "Vietnam",
+        content: "Improve drainage during the rainy season."
+    },
+    {
+        country: "Vietnam",
+        content: "Remove weeds regularly to reduce pests."
+    },
+    {
+        country: "Vietnam",
+        content: "Use mulch to retain soil moisture."
+    },
+    {
+        country: "Vietnam",
+        content: "Avoid overwatering during rainy seasons."
+    },
+    {
+        country: "Vietnam",
+        content: "Inspect crops weekly for pests and diseases."
+    },
+    {
+        country: "Vietnam",
+        content: "Rotate crops to improve soil fertility."
+    },
+
+    // ===========================
+    // JAPAN
+    // ===========================
+
+    {
+        country: "Japan",
+        content: "Maintain clean irrigation channels in rice fields."
+    },
+    {
+        country: "Japan",
+        content: "Monitor rice blast disease frequently."
+    },
+    {
+        country: "Japan",
+        content: "Use precision irrigation to conserve water."
+    },
+    {
+        country: "Japan",
+        content: "Apply fertilizer according to soil analysis."
+    },
+    {
+        country: "Japan",
+        content: "Control weeds before planting season."
+    },
+    {
+        country: "Japan",
+        content: "Harvest rice at the optimal maturity stage."
+    },
+    {
+        country: "Japan",
+        content: "Protect fruit trees from frost during winter."
+    },
+    {
+        country: "Japan",
+        content: "Prune fruit trees after harvest."
+    },
+    {
+        country: "Japan",
+        content: "Monitor greenhouse humidity carefully."
+    },
+    {
+        country: "Japan",
+        content: "Use integrated pest management techniques."
+    },
+
+    // ===========================
+    // CHINA
+    // ===========================
+
+    {
+        country: "China",
+        content: "Use crop rotation to maintain soil fertility."
+    },
+    {
+        country: "China",
+        content: "Apply balanced fertilizer before flowering."
+    },
+    {
+        country: "China",
+        content: "Control pests using biological methods."
+    },
+    {
+        country: "China",
+        content: "Monitor tea plantations for fungal diseases."
+    },
+    {
+        country: "China",
+        content: "Improve irrigation efficiency."
+    },
+    {
+        country: "China",
+        content: "Prune fruit trees every season."
+    },
+    {
+        country: "China",
+        content: "Avoid excessive nitrogen fertilizer."
+    },
+    {
+        country: "China",
+        content: "Improve field drainage after heavy rain."
+    },
+    {
+        country: "China",
+        content: "Inspect crops weekly."
+    },
+    {
+        country: "China",
+        content: "Maintain healthy soil microorganisms."
+    },
+
+    // ===========================
+    // THAILAND
+    // ===========================
+
+    {
+        country: "Thailand",
+        content: "Monitor durian orchards regularly."
+    },
+    {
+        country: "Thailand",
+        content: "Improve drainage during monsoon season."
+    },
+    {
+        country: "Thailand",
+        content: "Apply potassium fertilizer for fruit quality."
+    },
+    {
+        country: "Thailand",
+        content: "Reduce irrigation before fruit harvest."
+    },
+    {
+        country: "Thailand",
+        content: "Control fruit flies using traps."
+    },
+    {
+        country: "Thailand",
+        content: "Prune fruit trees after harvest."
+    },
+    {
+        country: "Thailand",
+        content: "Inspect plantations every week."
+    },
+    {
+        country: "Thailand",
+        content: "Use organic mulch around trees."
+    },
+    {
+        country: "Thailand",
+        content: "Avoid standing water around roots."
+    },
+    {
+        country: "Thailand",
+        content: "Use disease-resistant varieties whenever possible."
+    },
+
+    // ===========================
+    // INDIA
+    // ===========================
+
+    {
+        country: "India",
+        content: "Irrigate crops early in the morning."
+    },
+    {
+        country: "India",
+        content: "Monitor black pepper diseases regularly."
+    },
+    {
+        country: "India",
+        content: "Apply compost before planting."
+    },
+    {
+        country: "India",
+        content: "Avoid overwatering cotton fields."
+    },
+    {
+        country: "India",
+        content: "Improve drainage during monsoon."
+    },
+    {
+        country: "India",
+        content: "Rotate crops every season."
+    },
+    {
+        country: "India",
+        content: "Inspect tea plantations frequently."
+    },
+    {
+        country: "India",
+        content: "Control weeds mechanically."
+    },
+    {
+        country: "India",
+        content: "Use certified seeds."
+    },
+    {
+        country: "India",
+        content: "Apply fertilizer according to crop stage."
+    },
+// ===========================
+// SOUTH KOREA
+// ===========================
+
+{
+    country: "South Korea",
+    content: "Monitor ginseng fields for root diseases."
+},
+{
+    country: "South Korea",
+    content: "Maintain proper soil drainage."
+},
+{
+    country: "South Korea",
+    content: "Apply compost before planting."
+},
+{
+    country: "South Korea",
+    content: "Prune fruit trees after harvest."
+},
+{
+    country: "South Korea",
+    content: "Control aphids regularly."
+},
+{
+    country: "South Korea",
+    content: "Avoid excessive nitrogen fertilizer."
+},
+{
+    country: "South Korea",
+    content: "Inspect crops every week."
+},
+{
+    country: "South Korea",
+    content: "Use biological pest control methods."
+},
+{
+    country: "South Korea",
+    content: "Maintain greenhouse humidity."
+},
+{
+    country: "South Korea",
+    content: "Rotate crops annually."
+},
+
+// ===========================
+// INDONESIA
+// ===========================
+
+{
+    country: "Indonesia",
+    content: "Improve drainage during rainy season."
+},
+{
+    country: "Indonesia",
+    content: "Monitor coffee plantations weekly."
+},
+{
+    country: "Indonesia",
+    content: "Control fungal diseases early."
+},
+{
+    country: "Indonesia",
+    content: "Apply organic compost."
+},
+{
+    country: "Indonesia",
+    content: "Avoid waterlogging."
+},
+{
+    country: "Indonesia",
+    content: "Inspect cocoa trees regularly."
+},
+{
+    country: "Indonesia",
+    content: "Use shade trees for coffee plantations."
+},
+{
+    country: "Indonesia",
+    content: "Control weeds frequently."
+},
+{
+    country: "Indonesia",
+    content: "Harvest crops at proper maturity."
+},
+{
+    country: "Indonesia",
+    content: "Maintain healthy soil microorganisms."
+},
+
+// ===========================
+// MALAYSIA
+// ===========================
+
+{
+    country: "Malaysia",
+    content: "Monitor oil palm plantations regularly."
+},
+{
+    country: "Malaysia",
+    content: "Improve field drainage."
+},
+{
+    country: "Malaysia",
+    content: "Inspect coconut trees monthly."
+},
+{
+    country: "Malaysia",
+    content: "Apply balanced fertilizer."
+},
+{
+    country: "Malaysia",
+    content: "Control rhinoceros beetles."
+},
+{
+    country: "Malaysia",
+    content: "Prune old palm fronds."
+},
+{
+    country: "Malaysia",
+    content: "Reduce standing water."
+},
+{
+    country: "Malaysia",
+    content: "Monitor rubber tree diseases."
+},
+{
+    country: "Malaysia",
+    content: "Apply mulch around trees."
+},
+{
+    country: "Malaysia",
+    content: "Harvest fruits at full maturity."
+},
+
+// ===========================
+// PHILIPPINES
+// ===========================
+
+{
+    country: "Philippines",
+    content: "Inspect banana plantations weekly."
+},
+{
+    country: "Philippines",
+    content: "Control banana wilt disease."
+},
+{
+    country: "Philippines",
+    content: "Apply organic fertilizer."
+},
+{
+    country: "Philippines",
+    content: "Improve drainage after heavy rain."
+},
+{
+    country: "Philippines",
+    content: "Monitor coconut pests."
+},
+{
+    country: "Philippines",
+    content: "Remove diseased plants immediately."
+},
+{
+    country: "Philippines",
+    content: "Avoid excessive irrigation."
+},
+{
+    country: "Philippines",
+    content: "Use resistant crop varieties."
+},
+{
+    country: "Philippines",
+    content: "Inspect pineapple fields regularly."
+},
+{
+    country: "Philippines",
+    content: "Rotate crops every season."
+},
+
+// ===========================
+// SINGAPORE
+// ===========================
+
+{
+    country: "Singapore",
+    content: "Use vertical farming when possible."
+},
+{
+    country: "Singapore",
+    content: "Monitor greenhouse temperature."
+},
+{
+    country: "Singapore",
+    content: "Maintain hydroponic nutrient balance."
+},
+{
+    country: "Singapore",
+    content: "Inspect leafy vegetables daily."
+},
+{
+    country: "Singapore",
+    content: "Control humidity carefully."
+},
+{
+    country: "Singapore",
+    content: "Use LED lighting efficiently."
+},
+{
+    country: "Singapore",
+    content: "Prevent fungal diseases."
+},
+{
+    country: "Singapore",
+    content: "Disinfect farming equipment regularly."
+},
+{
+    country: "Singapore",
+    content: "Monitor water quality."
+},
+{
+    country: "Singapore",
+    content: "Harvest vegetables at peak freshness."
+},
+
+// ===========================
+// BRUNEI
+// ===========================
+
+{
+    country: "Brunei",
+    content: "Improve drainage during rainy periods."
+},
+{
+    country: "Brunei",
+    content: "Apply compost regularly."
+},
+{
+    country: "Brunei",
+    content: "Monitor coconut plantations."
+},
+{
+    country: "Brunei",
+    content: "Control insect pests."
+},
+{
+    country: "Brunei",
+    content: "Use mulch to conserve moisture."
+},
+{
+    country: "Brunei",
+    content: "Inspect fruit trees weekly."
+},
+{
+    country: "Brunei",
+    content: "Avoid overwatering."
+},
+{
+    country: "Brunei",
+    content: "Rotate vegetable crops."
+},
+{
+    country: "Brunei",
+    content: "Maintain healthy soil."
+},
+{
+    country: "Brunei",
+    content: "Harvest fruits when fully ripe."
+},
+];
+
+const diseases = [
+   
+
+    // =========================
+    // VIETNAM + ASIA
+    // =========================
+
+    {
+        crop_id: "rice",
+        countries: [
+            "Vietnam",
+            "Thailand",
+            "China",
+            "Japan",
+            "Korea",
+            "Indonesia",
+            "Philippines",
+            "Myanmar",
+            "Cambodia",
+            "Bangladesh",
+            "India"
+        ],
+        disease: "Rice Blast",
+        risk: "High",
+        solution: "Use resistant varieties and fungicide."
+    },
+
+    {
+        crop_id: "rice",
+        countries: [
+            "Vietnam",
+            "Thailand",
+            "China",
+            "Japan",
+            "Korea",
+            "Indonesia"
+        ],
+        disease: "Brown Spot",
+        risk: "Medium",
+        solution: "Apply balanced fertilizer."
+    },
+
+    {
+        crop_id: "black_pepper",
+        countries: [
+            "Vietnam",
+            "India",
+            "Indonesia",
+            "Malaysia",
+            "Sri Lanka"
+        ],
+        disease: "Foot Rot",
+        risk: "High",
+        solution: "Improve drainage and apply fungicide."
+    },
+
+    {
+        crop_id: "black_pepper",
+        countries: [
+            "Vietnam",
+            "India",
+            "Indonesia"
+        ],
+        disease: "Anthracnose",
+        risk: "Medium",
+        solution: "Prune infected branches."
+    },
+
+    {
+        crop_id: "dragon_fruit",
+        countries: [
+            "Vietnam",
+            "Thailand"
+        ],
+        disease: "Stem Rot",
+        risk: "Medium",
+        solution: "Reduce watering."
+    },
+
+    {
+        crop_id: "durian",
+        countries: [
+            "Thailand",
+            "Malaysia",
+            "Vietnam",
+            "Indonesia"
+        ],
+        disease: "Root Rot",
+        risk: "High",
+        solution: "Avoid waterlogging."
+    },
+
+    {
+        crop_id: "cashew",
+        countries: [
+            "Vietnam",
+            "India",
+            "Cambodia"
+        ],
+        disease: "Powdery Mildew",
+        risk: "Medium",
+        solution: "Spray sulfur fungicide."
+    },
+
+    {
+        crop_id: "lychee",
+        countries: [
+            "Vietnam",
+            "China"
+        ],
+        disease: "Anthracnose",
+        risk: "High",
+        solution: "Remove infected fruits."
+    },
+
+    {
+        crop_id: "longan",
+        countries: [
+            "Vietnam",
+            "Thailand"
+        ],
+        disease: "Sooty Mold",
+        risk: "Medium",
+        solution: "Control aphids."
+    },
+
+    {
+        crop_id: "pomelo",
+        countries: [
+            "Vietnam",
+            "China",
+            "Thailand"
+        ],
+        disease: "Citrus Canker",
+        risk: "High",
+        solution: "Spray copper fungicide."
+    },
+
+    // =========================
+    // JAPAN
+    // =========================
+
+    {
+        crop_id: "buckwheat",
+        countries: [
+            "Japan",
+            "China",
+            "Korea"
+        ],
+        disease: "Leaf Spot",
+        risk: "Medium",
+        solution: "Remove infected leaves and apply fungicide."
+    },
+
+    {
+        crop_id: "wasabi",
+        countries: [
+            "Japan"
+        ],
+        disease: "Root Rot",
+        risk: "High",
+        solution: "Improve drainage and avoid overwatering."
+    },
+
+    {
+        crop_id: "yuzu",
+        countries: [
+            "Japan",
+            "China",
+            "Korea"
+        ],
+        disease: "Citrus Canker",
+        risk: "High",
+        solution: "Spray copper-based fungicide."
+    },
+
+    {
+        crop_id: "japanese_persimmon",
+        countries: [
+            "Japan"
+        ],
+        disease: "Anthracnose",
+        risk: "Medium",
+        solution: "Prune infected branches."
+    },
+
+    // =========================
+    // KOREA
+    // =========================
+
+    {
+        crop_id: "ginseng",
+        countries: [
+            "Korea",
+            "China"
+        ],
+        disease: "Root Rot",
+        risk: "High",
+        solution: "Improve soil drainage."
+    },
+
+    {
+        crop_id: "korean_pear",
+        countries: [
+            "Korea"
+        ],
+        disease: "Fire Blight",
+        risk: "High",
+        solution: "Remove infected branches."
+    },
+
+    // =========================
+    // INDIA
+    // =========================
+
+    {
+        crop_id: "tea",
+        countries: [
+            "India",
+            "China",
+            "Japan",
+            "Sri Lanka",
+            "Vietnam"
+        ],
+        disease: "Blister Blight",
+        risk: "High",
+        solution: "Spray recommended fungicide."
+    },
+
+    {
+        crop_id: "turmeric",
+        countries: [
+            "India"
+        ],
+        disease: "Leaf Blotch",
+        risk: "Medium",
+        solution: "Remove infected leaves."
+    },
+
+    {
+        crop_id: "cardamom",
+        countries: [
+            "India"
+        ],
+        disease: "Capsule Rot",
+        risk: "High",
+        solution: "Improve field sanitation."
+    },
+
+    // =========================
+    // MALAYSIA
+    // =========================
+
+    {
+        crop_id: "oil_palm",
+        countries: [
+            "Malaysia",
+            "Indonesia"
+        ],
+        disease: "Ganoderma Disease",
+        risk: "High",
+        solution: "Remove infected trees."
+    },
+
+    // =========================
+    // INDONESIA
+    // =========================
+
+    {
+        crop_id: "clove",
+        countries: [
+            "Indonesia"
+        ],
+        disease: "Leaf Spot",
+        risk: "Medium",
+        solution: "Apply fungicide."
+    },
+
+    {
+        crop_id: "nutmeg",
+        countries: [
+            "Indonesia"
+        ],
+        disease: "Fruit Rot",
+        risk: "Medium",
+        solution: "Improve air circulation."
+    },
+
+    // =========================
+    // BANGLADESH
+    // =========================
+
+    {
+        crop_id: "jute",
+        countries: [
+            "Bangladesh",
+            "India"
+        ],
+        disease: "Stem Rot",
+        risk: "High",
+        solution: "Rotate crops."
+    },
+
+    // ==========================
+    // RICE
+    // ==========================
+
+    {
+        crop_id: "rice",
+        disease: "Rice Blast",
+        risk: "High",
+        solution: "Use resistant varieties and apply fungicide."
+    },
+    {
+        crop_id: "rice",
+        disease: "Brown Spot",
+        risk: "Medium",
+        solution: "Apply balanced fertilizer."
+    },
+    {
+        crop_id: "rice",
+        disease: "Bacterial Leaf Blight",
+        risk: "High",
+        solution: "Use disease-free seeds."
+    },
+    {
+        crop_id: "rice",
+        disease: "Sheath Blight",
+        risk: "Medium",
+        solution: "Reduce excessive nitrogen fertilizer."
+    },
+    {
+        crop_id: "rice",
+        disease: "False Smut",
+        risk: "Low",
+        solution: "Spray fungicide before flowering."
+    },
+
+    // ==========================
+    // MAIZE
+    // ==========================
+
+    {
+        crop_id: "maize",
+        disease: "Northern Leaf Blight",
+        risk: "High",
+        solution: "Plant resistant hybrids."
+    },
+    {
+        crop_id: "maize",
+        disease: "Common Rust",
+        risk: "Medium",
+        solution: "Use fungicide when necessary."
+    },
+    {
+        crop_id: "maize",
+        disease: "Gray Leaf Spot",
+        risk: "Medium",
+        solution: "Rotate crops regularly."
+    },
+
+    // ==========================
+    // SWEET POTATO
+    // ==========================
+
+    {
+        crop_id: "sweet_potato",
+        disease: "Black Rot",
+        risk: "Medium",
+        solution: "Use healthy planting materials."
+    },
+    {
+        crop_id: "sweet_potato",
+        disease: "Stem Rot",
+        risk: "Medium",
+        solution: "Improve soil drainage."
+    },
+
+    // ==========================
+    // CASSAVA
+    // ==========================
+
+    {
+        crop_id: "cassava",
+        disease: "Cassava Mosaic Disease",
+        risk: "High",
+        solution: "Plant resistant varieties."
+    },
+    {
+        crop_id: "cassava",
+        disease: "Cassava Brown Streak Disease",
+        risk: "High",
+        solution: "Remove infected plants."
+    },
+
+    // ==========================
+    // POTATO
+    // ==========================
+
+    {
+        crop_id: "potato",
+        disease: "Late Blight",
+        risk: "High",
+        solution: "Apply fungicide immediately."
+    },
+    {
+        crop_id: "potato",
+        disease: "Early Blight",
+        risk: "Medium",
+        solution: "Avoid overhead irrigation."
+    },
+    {
+        crop_id: "potato",
+        disease: "Blackleg",
+        risk: "Medium",
+        solution: "Use certified seed potatoes."
+    },
+
+    // ==========================
+    // TARO
+    // ==========================
+
+    {
+        crop_id: "taro",
+        disease: "Leaf Blight",
+        risk: "High",
+        solution: "Spray copper fungicide."
+    },
+    {
+        crop_id: "taro",
+        disease: "Corm Rot",
+        risk: "Medium",
+        solution: "Improve drainage."
+    },
+
+// ==================================================
+// INDUSTRIAL CROPS
+// ==================================================
+
+// COFFEE
+
+{
+    crop_id: "coffee",
+    disease: "Coffee Leaf Rust",
+    risk: "High",
+    solution: "Apply fungicide and plant resistant varieties."
+},
+{
+    crop_id: "coffee",
+    disease: "Coffee Berry Disease",
+    risk: "High",
+    solution: "Remove infected berries and spray fungicide."
+},
+{
+    crop_id: "coffee",
+    disease: "Root Rot",
+    risk: "Medium",
+    solution: "Improve soil drainage."
+},
+{
+    crop_id: "coffee",
+    disease: "Wilt Disease",
+    risk: "Medium",
+    solution: "Remove infected plants."
+},
+
+// ROBUSTA COFFEE
+
+{
+    crop_id: "robusta_coffee",
+    disease: "Coffee Leaf Rust",
+    risk: "High",
+    solution: "Use resistant varieties."
+},
+{
+    crop_id: "robusta_coffee",
+    disease: "Coffee Berry Disease",
+    risk: "Medium",
+    solution: "Spray fungicide during fruit development."
+},
+
+// ARABICA COFFEE
+
+{
+    crop_id: "arabica_coffee",
+    disease: "Coffee Leaf Rust",
+    risk: "High",
+    solution: "Monitor plantations and apply fungicide."
+},
+{
+    crop_id: "arabica_coffee",
+    disease: "Berry Rot",
+    risk: "Medium",
+    solution: "Prune infected branches."
+},
+
+// RUBBER TREE
+
+{
+    crop_id: "rubber_tree",
+    disease: "Abnormal Leaf Fall",
+    risk: "High",
+    solution: "Apply recommended fungicide."
+},
+{
+    crop_id: "rubber_tree",
+    disease: "Powdery Mildew",
+    risk: "Medium",
+    solution: "Spray sulfur fungicide."
+},
+{
+    crop_id: "rubber_tree",
+    disease: "Pink Disease",
+    risk: "Medium",
+    solution: "Prune infected branches."
+},
+
+// CASHEW
+
+{
+    crop_id: "cashew",
+    disease: "Powdery Mildew",
+    risk: "High",
+    solution: "Spray sulfur fungicide."
+},
+{
+    crop_id: "cashew",
+    disease: "Anthracnose",
+    risk: "Medium",
+    solution: "Remove infected leaves."
+},
+{
+    crop_id: "cashew",
+    disease: "Dieback",
+    risk: "Medium",
+    solution: "Prune affected branches."
+},
+
+// BLACK PEPPER
+
+{
+    crop_id: "black_pepper",
+    disease: "Foot Rot",
+    risk: "High",
+    solution: "Improve drainage and apply fungicide."
+},
+{
+    crop_id: "black_pepper",
+    disease: "Anthracnose",
+    risk: "Medium",
+    solution: "Prune infected vines."
+},
+{
+    crop_id: "black_pepper",
+    disease: "Quick Wilt",
+    risk: "High",
+    solution: "Avoid waterlogging and use fungicide."
+},
+{
+    crop_id: "black_pepper",
+    disease: "Root Rot",
+    risk: "High",
+    solution: "Improve drainage."
+},
+
+// TEA
+
+{
+    crop_id: "tea",
+    disease: "Blister Blight",
+    risk: "High",
+    solution: "Spray copper fungicide."
+},
+{
+    crop_id: "tea",
+    disease: "Red Rust",
+    risk: "Medium",
+    solution: "Apply balanced fertilizer."
+},
+{
+    crop_id: "tea",
+    disease: "Root Rot",
+    risk: "Medium",
+    solution: "Improve drainage."
+},
+{
+    crop_id: "tea",
+    disease: "Anthracnose",
+    risk: "Medium",
+    solution: "Remove infected leaves."
+},
+
+// COCONUT
+
+{
+    crop_id: "coconut",
+    disease: "Bud Rot",
+    risk: "High",
+    solution: "Destroy infected tissues and apply fungicide."
+},
+{
+    crop_id: "coconut",
+    disease: "Stem Bleeding",
+    risk: "Medium",
+    solution: "Remove affected bark."
+},
+{
+    crop_id: "coconut",
+    disease: "Leaf Rot",
+    risk: "Medium",
+    solution: "Improve air circulation."
+},
+
+// SUGARCANE
+
+{
+    crop_id: "sugarcane",
+    disease: "Red Rot",
+    risk: "High",
+    solution: "Use disease-free planting material."
+},
+{
+    crop_id: "sugarcane",
+    disease: "Smut",
+    risk: "High",
+    solution: "Remove infected plants."
+},
+{
+    crop_id: "sugarcane",
+    disease: "Wilt",
+    risk: "Medium",
+    solution: "Rotate crops."
+},
+{
+    crop_id: "sugarcane",
+    disease: "Leaf Scald",
+    risk: "Medium",
+    solution: "Use resistant varieties."
+},
+
+// TOBACCO
+
+{
+    crop_id: "tobacco",
+    disease: "Mosaic Virus",
+    risk: "High",
+    solution: "Remove infected plants."
+},
+{
+    crop_id: "tobacco",
+    disease: "Black Shank",
+    risk: "High",
+    solution: "Improve drainage."
+},
+{
+    crop_id: "tobacco",
+    disease: "Blue Mold",
+    risk: "Medium",
+    solution: "Spray fungicide."
+},
+
+// COTTON
+
+{
+    crop_id: "cotton",
+    disease: "Bacterial Blight",
+    risk: "High",
+    solution: "Use certified seeds."
+},
+{
+    crop_id: "cotton",
+    disease: "Verticillium Wilt",
+    risk: "Medium",
+    solution: "Rotate crops."
+},
+{
+    crop_id: "cotton",
+    disease: "Fusarium Wilt",
+    risk: "Medium",
+    solution: "Plant resistant varieties."
+},
+{
+    crop_id: "cotton",
+    disease: "Alternaria Leaf Spot",
+    risk: "Low",
+    solution: "Spray fungicide."
+},
+//Barley
+{
+  "crop_id": "barley",
+  "disease": "Leaf Rust",
+  "risk": "Medium",
+  "solution": "Apply fungicide."
+},
+{
+  "crop_id": "barley",
+  "disease": "Powdery Mildew",
+  "risk": "Medium",
+  "solution": "Use resistant varieties."
+},
+{
+  "crop_id": "barley",
+  "disease": "Net Blotch",
+  "risk": "High",
+  "solution": "Rotate crops and apply fungicide."
+},
+{
+  "crop_id": "barley",
+  "disease": "Scald",
+  "risk": "Medium",
+  "solution": "Improve field drainage."
+},
+
+// COCOA
+
+{
+    crop_id: "cocoa",
+    disease: "Black Pod Disease",
+    risk: "High",
+    solution: "Harvest infected pods and spray fungicide."
+},
+{
+    crop_id: "cocoa",
+    disease: "Frosty Pod Rot",
+    risk: "High",
+    solution: "Remove infected pods."
+},
+{
+    crop_id: "cocoa",
+    disease: "Stem Canker",
+    risk: "Medium",
+    solution: "Prune infected branches."
+},
+{
+    crop_id: "cocoa",
+    disease: "Vascular Streak Dieback",
+    risk: "Medium",
+    solution: "Improve field sanitation."
+},
+// ==================================================
+// TROPICAL FRUITS
+// ==================================================
+
+// DRAGON FRUIT
+
+{
+    crop_id: "dragon_fruit",
+    disease: "Stem Rot",
+    risk: "Medium",
+    solution: "Reduce watering and improve drainage."
+},
+{
+    crop_id: "dragon_fruit",
+    disease: "Anthracnose",
+    risk: "High",
+    solution: "Spray fungicide and prune infected stems."
+},
+{
+    crop_id: "dragon_fruit",
+    disease: "Brown Spot",
+    risk: "Medium",
+    solution: "Remove infected branches."
+},
+
+// MANGO
+
+{
+    crop_id: "mango",
+    disease: "Anthracnose",
+    risk: "High",
+    solution: "Spray fungicide before flowering."
+},
+{
+    crop_id: "mango",
+    disease: "Powdery Mildew",
+    risk: "High",
+    solution: "Apply sulfur fungicide."
+},
+{
+    crop_id: "mango",
+    disease: "Stem End Rot",
+    risk: "Medium",
+    solution: "Harvest carefully and avoid injuries."
+},
+
+// BANANA
+
+{
+    crop_id: "banana",
+    disease: "Panama Disease",
+    risk: "High",
+    solution: "Use resistant varieties."
+},
+{
+    crop_id: "banana",
+    disease: "Black Sigatoka",
+    risk: "High",
+    solution: "Spray fungicide regularly."
+},
+{
+    crop_id: "banana",
+    disease: "Bunchy Top Virus",
+    risk: "High",
+    solution: "Destroy infected plants."
+},
+
+// JACKFRUIT
+
+{
+    crop_id: "jackfruit",
+    disease: "Fruit Rot",
+    risk: "Medium",
+    solution: "Remove infected fruits."
+},
+{
+    crop_id: "jackfruit",
+    disease: "Pink Disease",
+    risk: "Medium",
+    solution: "Prune infected branches."
+},
+
+// DURIAN
+
+{
+    crop_id: "durian",
+    disease: "Root Rot",
+    risk: "High",
+    solution: "Avoid waterlogging."
+},
+{
+    crop_id: "durian",
+    disease: "Stem Canker",
+    risk: "High",
+    solution: "Apply fungicide on infected bark."
+},
+{
+    crop_id: "durian",
+    disease: "Anthracnose",
+    risk: "Medium",
+    solution: "Prune infected branches."
+},
+{
+    crop_id: "durian",
+    disease: "Fruit Rot",
+    risk: "Medium",
+    solution: "Harvest infected fruits immediately."
+},
+
+// POMELO
+
+{
+    crop_id: "pomelo",
+    disease: "Citrus Canker",
+    risk: "High",
+    solution: "Spray copper fungicide."
+},
+{
+    crop_id: "pomelo",
+    disease: "Greening Disease",
+    risk: "High",
+    solution: "Control psyllid insects."
+},
+{
+    crop_id: "pomelo",
+    disease: "Root Rot",
+    risk: "Medium",
+    solution: "Improve drainage."
+},
+
+// ORANGE
+
+{
+    crop_id: "orange",
+    disease: "Citrus Canker",
+    risk: "High",
+    solution: "Apply copper fungicide."
+},
+{
+    crop_id: "orange",
+    disease: "Greening Disease",
+    risk: "High",
+    solution: "Remove infected trees."
+},
+{
+    crop_id: "orange",
+    disease: "Black Spot",
+    risk: "Medium",
+    solution: "Spray fungicide."
+},
+
+// MANDARIN
+
+{
+    crop_id: "mandarin",
+    disease: "Citrus Canker",
+    risk: "High",
+    solution: "Use disease-free seedlings."
+},
+{
+    crop_id: "mandarin",
+    disease: "Greening Disease",
+    risk: "High",
+    solution: "Control insect vectors."
+},
+
+// LIME
+
+{
+    crop_id: "lime",
+    disease: "Citrus Canker",
+    risk: "High",
+    solution: "Spray copper fungicide."
+},
+{
+    crop_id: "lime",
+    disease: "Greening Disease",
+    risk: "High",
+    solution: "Destroy infected trees."
+},
+
+// PASSION FRUIT
+
+{
+    crop_id: "passion_fruit",
+    disease: "Woodiness Virus",
+    risk: "High",
+    solution: "Remove infected vines."
+},
+{
+    crop_id: "passion_fruit",
+    disease: "Brown Spot",
+    risk: "Medium",
+    solution: "Apply fungicide."
+},
+
+// LYCHEE
+
+{
+    crop_id: "lychee",
+    disease: "Anthracnose",
+    risk: "High",
+    solution: "Remove infected fruits."
+},
+{
+    crop_id: "lychee",
+    disease: "Downy Blight",
+    risk: "Medium",
+    solution: "Improve air circulation."
+},
+
+// LONGAN
+
+{
+    crop_id: "longan",
+    disease: "Sooty Mold",
+    risk: "Medium",
+    solution: "Control aphids."
+},
+{
+    crop_id: "longan",
+    disease: "Anthracnose",
+    risk: "High",
+    solution: "Spray fungicide."
+},
+
+// RAMBUTAN
+
+{
+    crop_id: "rambutan",
+    disease: "Fruit Rot",
+    risk: "Medium",
+    solution: "Remove infected fruits."
+},
+{
+    crop_id: "rambutan",
+    disease: "Powdery Mildew",
+    risk: "Medium",
+    solution: "Spray sulfur fungicide."
+},
+
+// MANGOSTEEN
+
+{
+    crop_id: "mangosteen",
+    disease: "Leaf Spot",
+    risk: "Medium",
+    solution: "Apply fungicide."
+},
+{
+    crop_id: "mangosteen",
+    disease: "Root Rot",
+    risk: "High",
+    solution: "Improve drainage."
+},
+
+// PINEAPPLE
+
+{
+    crop_id: "pineapple",
+    disease: "Heart Rot",
+    risk: "High",
+    solution: "Improve field drainage."
+},
+{
+    crop_id: "pineapple",
+    disease: "Black Rot",
+    risk: "Medium",
+    solution: "Handle fruits carefully."
+},
+{
+    crop_id: "pineapple",
+    disease: "Fruitlet Core Rot",
+    risk: "Medium",
+    solution: "Use disease-free planting materials."
+},
+
+// PAPAYA
+
+{
+    crop_id: "papaya",
+    disease: "Papaya Ringspot Virus",
+    risk: "High",
+    solution: "Remove infected plants."
+},
+{
+    crop_id: "papaya",
+    disease: "Anthracnose",
+    risk: "Medium",
+    solution: "Spray fungicide."
+},
+{
+    crop_id: "papaya",
+    disease: "Root Rot",
+    risk: "Medium",
+    solution: "Avoid waterlogging."
+},
+
+// GUAVA
+
+{
+    crop_id: "guava",
+    disease: "Wilt Disease",
+    risk: "High",
+    solution: "Remove infected trees."
+},
+{
+    crop_id: "guava",
+    disease: "Anthracnose",
+    risk: "Medium",
+    solution: "Spray fungicide."
+},
+
+// SUGAR APPLE
+
+{
+    crop_id: "sugar_apple",
+    disease: "Fruit Rot",
+    risk: "Medium",
+    solution: "Collect infected fruits."
+},
+{
+    crop_id: "sugar_apple",
+    disease: "Leaf Spot",
+    risk: "Low",
+    solution: "Spray fungicide if necessary."
+},
+
+// WAX APPLE
+
+{
+    crop_id: "wax_apple",
+    disease: "Anthracnose",
+    risk: "Medium",
+    solution: "Prune infected branches."
+},
+{
+    crop_id: "wax_apple",
+    disease: "Fruit Rot",
+    risk: "Medium",
+    solution: "Improve orchard sanitation."
+},
+
+// TAMARIND
+
+{
+    crop_id: "tamarind",
+    disease: "Leaf Spot",
+    risk: "Low",
+    solution: "Remove infected leaves."
+},
+{
+    crop_id: "tamarind",
+    disease: "Powdery Mildew",
+    risk: "Medium",
+    solution: "Spray sulfur fungicide."
+},
+
+// AMBARELLA
+
+{
+    crop_id: "ambarella",
+    disease: "Anthracnose",
+    risk: "Medium",
+    solution: "Apply fungicide."
+},
+{
+    crop_id: "ambarella",
+    disease: "Fruit Rot",
+    risk: "Medium",
+    solution: "Remove infected fruits."
+},
+
+// STAR FRUIT
+
+{
+    crop_id: "star_fruit",
+    disease: "Leaf Spot",
+    risk: "Medium",
+    solution: "Spray fungicide."
+},
+{
+    crop_id: "star_fruit",
+    disease: "Fruit Rot",
+    risk: "Medium",
+    solution: "Improve orchard hygiene."
+},
+
+// SAPODILLA
+
+{
+    crop_id: "sapodilla",
+    disease: "Leaf Spot",
+    risk: "Low",
+    solution: "Prune infected leaves."
+},
+{
+    crop_id: "sapodilla",
+    disease: "Sooty Mold",
+    risk: "Medium",
+    solution: "Control sap-sucking insects."
+},
+
+// AVOCADO
+
+{
+    crop_id: "avocado",
+    disease: "Root Rot",
+    risk: "High",
+    solution: "Improve drainage and avoid overwatering."
+},
+{
+    crop_id: "avocado",
+    disease: "Anthracnose",
+    risk: "Medium",
+    solution: "Spray fungicide."
+},
+{
+    crop_id: "avocado",
+    disease: "Scab",
+    risk: "Medium",
+    solution: "Use copper-based fungicide."
+},
+// ==================================================
+// VEGETABLES
+// ==================================================
+
+// TOMATO
+
+{
+    crop_id: "tomato",
+    disease: "Early Blight",
+    risk: "High",
+    solution: "Apply fungicide and rotate crops."
+},
+{
+    crop_id: "tomato",
+    disease: "Late Blight",
+    risk: "High",
+    solution: "Remove infected plants immediately."
+},
+{
+    crop_id: "tomato",
+    disease: "Bacterial Wilt",
+    risk: "Medium",
+    solution: "Improve soil drainage."
+},
+
+// CUCUMBER
+
+{
+    crop_id: "cucumber",
+    disease: "Downy Mildew",
+    risk: "High",
+    solution: "Spray fungicide regularly."
+},
+{
+    crop_id: "cucumber",
+    disease: "Powdery Mildew",
+    risk: "Medium",
+    solution: "Apply sulfur fungicide."
+},
+
+// PUMPKIN
+
+{
+    crop_id: "pumpkin",
+    disease: "Powdery Mildew",
+    risk: "Medium",
+    solution: "Spray sulfur fungicide."
+},
+{
+    crop_id: "pumpkin",
+    disease: "Anthracnose",
+    risk: "Medium",
+    solution: "Remove infected vines."
+},
+
+// WINTER MELON
+
+{
+    crop_id: "winter_melon",
+    disease: "Downy Mildew",
+    risk: "Medium",
+    solution: "Improve air circulation."
+},
+{
+    crop_id: "winter_melon",
+    disease: "Fruit Rot",
+    risk: "Medium",
+    solution: "Avoid excessive moisture."
+},
+
+// ZUCCHINI
+
+{
+    crop_id: "zucchini",
+    disease: "Powdery Mildew",
+    risk: "High",
+    solution: "Spray fungicide."
+},
+{
+    crop_id: "zucchini",
+    disease: "Mosaic Virus",
+    risk: "Medium",
+    solution: "Control aphids."
+},
+
+// BOTTLE GOURD
+
+{
+    crop_id: "bottle_gourd",
+    disease: "Downy Mildew",
+    risk: "Medium",
+    solution: "Improve drainage."
+},
+{
+    crop_id: "bottle_gourd",
+    disease: "Fruit Rot",
+    risk: "Low",
+    solution: "Remove infected fruits."
+},
+
+// SPONGE GOURD
+
+{
+    crop_id: "sponge_gourd",
+    disease: "Powdery Mildew",
+    risk: "Medium",
+    solution: "Apply fungicide."
+},
+{
+    crop_id: "sponge_gourd",
+    disease: "Leaf Spot",
+    risk: "Low",
+    solution: "Prune infected leaves."
+},
+
+// BITTER MELON
+
+{
+    crop_id: "bitter_melon",
+    disease: "Anthracnose",
+    risk: "Medium",
+    solution: "Spray fungicide."
+},
+{
+    crop_id: "bitter_melon",
+    disease: "Powdery Mildew",
+    risk: "Medium",
+    solution: "Use sulfur fungicide."
+},
+
+// OKRA
+
+{
+    crop_id: "okra",
+    disease: "Yellow Vein Mosaic",
+    risk: "High",
+    solution: "Control whiteflies."
+},
+{
+    crop_id: "okra",
+    disease: "Wilt",
+    risk: "Medium",
+    solution: "Rotate crops."
+},
+
+// GREEN BEAN
+
+{
+    crop_id: "green_bean",
+    disease: "Rust",
+    risk: "Medium",
+    solution: "Apply fungicide."
+},
+{
+    crop_id: "green_bean",
+    disease: "Anthracnose",
+    risk: "High",
+    solution: "Use disease-free seeds."
+},
+
+// PEA
+
+{
+    crop_id: "pea",
+    disease: "Powdery Mildew",
+    risk: "Medium",
+    solution: "Spray fungicide."
+},
+{
+    crop_id: "pea",
+    disease: "Root Rot",
+    risk: "Medium",
+    solution: "Improve drainage."
+},
+
+// SPRING ONION
+
+{
+    crop_id: "spring_onion",
+    disease: "Purple Blotch",
+    risk: "Medium",
+    solution: "Apply fungicide."
+},
+{
+    crop_id: "spring_onion",
+    disease: "Downy Mildew",
+    risk: "Medium",
+    solution: "Reduce humidity."
+},
+
+// ONION
+
+{
+    crop_id: "onion",
+    disease: "Purple Blotch",
+    risk: "High",
+    solution: "Spray fungicide."
+},
+{
+    crop_id: "onion",
+    disease: "Neck Rot",
+    risk: "Medium",
+    solution: "Store bulbs properly."
+},
+
+// GARLIC
+
+{
+    crop_id: "garlic",
+    disease: "White Rot",
+    risk: "High",
+    solution: "Rotate crops."
+},
+{
+    crop_id: "garlic",
+    disease: "Rust",
+    risk: "Medium",
+    solution: "Apply fungicide."
+},
+
+// GINGER
+
+{
+    crop_id: "ginger",
+    disease: "Soft Rot",
+    risk: "High",
+    solution: "Improve drainage."
+},
+{
+    crop_id: "ginger",
+    disease: "Bacterial Wilt",
+    risk: "Medium",
+    solution: "Use healthy rhizomes."
+},
+
+// TURMERIC
+
+{
+    crop_id: "turmeric",
+    disease: "Rhizome Rot",
+    risk: "High",
+    solution: "Avoid waterlogging."
+},
+{
+    crop_id: "turmeric",
+    disease: "Leaf Spot",
+    risk: "Medium",
+    solution: "Spray fungicide."
+},
+
+// CHILI PEPPER
+
+{
+    crop_id: "chili_pepper",
+    disease: "Anthracnose",
+    risk: "High",
+    solution: "Apply fungicide."
+},
+{
+    crop_id: "chili_pepper",
+    disease: "Wilt",
+    risk: "Medium",
+    solution: "Improve soil health."
+},
+
+// EGGPLANT
+
+{
+    crop_id: "eggplant",
+    disease: "Verticillium Wilt",
+    risk: "Medium",
+    solution: "Rotate crops."
+},
+{
+    crop_id: "eggplant",
+    disease: "Phomopsis Blight",
+    risk: "High",
+    solution: "Use certified seeds."
+},
+
+// ==================================================
+// HERBS
+// ==================================================
+
+{
+    crop_id: "thai_basil",
+    disease: "Downy Mildew",
+    risk: "Medium",
+    solution: "Improve air circulation."
+},
+{
+    crop_id: "vietnamese_coriander",
+    disease: "Leaf Spot",
+    risk: "Low",
+    solution: "Remove infected leaves."
+},
+{
+    crop_id: "cilantro",
+    disease: "Powdery Mildew",
+    risk: "Medium",
+    solution: "Spray fungicide."
+},
+{
+    crop_id: "culantro",
+    disease: "Leaf Blight",
+    risk: "Medium",
+    solution: "Reduce leaf moisture."
+},
+{
+    crop_id: "perilla",
+    disease: "Downy Mildew",
+    risk: "Medium",
+    solution: "Improve ventilation."
+},
+{
+    crop_id: "vietnamese_balm",
+    disease: "Leaf Spot",
+    risk: "Low",
+    solution: "Prune infected leaves."
+},
+{
+    crop_id: "garlic_chives",
+    disease: "Rust",
+    risk: "Medium",
+    solution: "Spray fungicide."
+},
+{
+    crop_id: "mint",
+    disease: "Mint Rust",
+    risk: "High",
+    solution: "Remove infected stems."
+},
+{
+    crop_id: "lemongrass",
+    disease: "Leaf Blight",
+    risk: "Low",
+    solution: "Improve drainage."
+},
+
+// ==================================================
+// TIMBER TREES
+// ==================================================
+
+{
+    crop_id: "acacia",
+    disease: "Root Rot",
+    risk: "Medium",
+    solution: "Improve soil drainage."
+},
+{
+    crop_id: "eucalyptus",
+    disease: "Leaf Blight",
+    risk: "Medium",
+    solution: "Prune infected branches."
+},
+{
+    crop_id: "pine",
+    disease: "Pine Wilt",
+    risk: "High",
+    solution: "Control pine sawyer beetles."
+},
+{
+    crop_id: "african_mahogany",
+    disease: "Stem Canker",
+    risk: "Medium",
+    solution: "Remove infected bark."
+},
+{
+    crop_id: "ironwood",
+    disease: "Leaf Spot",
+    risk: "Low",
+    solution: "Improve tree sanitation."
+},
+{
+    crop_id: "rosewood",
+    disease: "Root Rot",
+    risk: "Medium",
+    solution: "Improve drainage."
+},
+{
+    crop_id: "hopea",
+    disease: "Stem Rot",
+    risk: "Medium",
+    solution: "Apply fungicide."
+},
+{
+    crop_id: "red_afzelia",
+    disease: "Leaf Blight",
+    risk: "Low",
+    solution: "Remove infected leaves."
+},
+{
+    crop_id: "melaleuca",
+    disease: "Wilt",
+    risk: "Medium",
+    solution: "Improve soil conditions."
+},
+];
+    
+  
+    
+    // ======================================================
+// 4. IMPORT FUNCTIONS
+// ======================================================
+
+async function importCropCategories() {
+    const batch = writeBatch(db);
+
+    cropCategories.forEach((category) => {
+        const ref = doc(db, "crop_categories", category.id);
+
+        batch.set(ref, {
+            ...category,
+            created_at: serverTimestamp(),
+            updated_at: serverTimestamp()
+        });
+    });
+
+    await batch.commit();
+
+    console.log("✅ Đã thêm crop_categories");
+}
+
+async function importCrops() {
+    const batch = writeBatch(db);
+
+    crops.forEach((crop) => {
+        const ref = doc(db, "crops", crop.id);
+
+        batch.set(ref, {
+            alternative_names_vi: [],
+            alternative_names_en: [],
+            is_signature_vietnamese_crop: false,
+            ...crop,
+            created_at: serverTimestamp(),
+            updated_at: serverTimestamp()
+        });
+    });
+
+    await batch.commit();
+
+    console.log("✅ Đã thêm crops");
+}
+
+async function importAgricultureTerms() {
+    const batch = writeBatch(db);
+
+    agricultureTerms.forEach((term) => {
+        const ref = doc(db, "agriculture_terms", term.id);
+
+        batch.set(ref, {
+            ...term,
+            created_at: serverTimestamp(),
+            updated_at: serverTimestamp()
+        });
+    });
+
+    await batch.commit();
+
+    console.log("✅ Đã thêm agriculture_terms");
+}
+
+async function importRecommendations() {
+    const batch = writeBatch(db);
+
+    recommendations.forEach((item, index) => {
+        const ref = doc(db, "recommendations", `rec_${index + 1}`);
+
+        batch.set(ref, {
+            ...item,
+            created_at: serverTimestamp(),
+            updated_at: serverTimestamp()
+        });
+    });
+
+    await batch.commit();
+
+    console.log("✅ Đã thêm recommendations");
+}
+
+async function importDiseases() {
+    const batch = writeBatch(db);
+
+    diseases.forEach((item, index) => {
+        const ref = doc(db, "diseases", `disease_${index + 1}`);
+
+        batch.set(ref, {
+            ...item,
+            created_at: serverTimestamp(),
+            updated_at: serverTimestamp()
+        });
+    });
+
+    await batch.commit();
+
+    console.log("✅ Đã thêm diseases");
+}
+
+async function importAllData() {
+    try {
+
+        console.log("🚀 Bắt đầu import dữ liệu...");
+
+        await importCropCategories();
+        await importCrops();
+        await importAgricultureTerms();
+        await importRecommendations();
+        await importDiseases();
+
+        console.log("🎉 Import hoàn tất!");
+        alert("Đã import toàn bộ dữ liệu vào Firestore.");
+
+    } catch (error) {
+
+        console.error("Lỗi:", error);
+        alert(error.message);
+
+    }
+}
+
+window.importAllData = importAllData;
+    // Đưa hàm ra window để có thể gọi từ nút HTML hoặc Console.
+    window.importAllData = importAllData;
+    </script>
+    
+    <button onclick="importAllData()">
+        Import dữ liệu vào Firestore
+    </button>

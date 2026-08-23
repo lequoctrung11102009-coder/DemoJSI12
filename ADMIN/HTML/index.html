@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#173f35">
+    <title>Quản lý cây trồng — AgriAdmin</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="admin-shell">
+        <!-- SIDEBAR CHUYỂN TRANG HTML -->
+        <aside class="sidebar" id="sidebar" aria-label="Điều hướng chính">
+            <a class="brand" href="index.html" aria-label="AgriAdmin">
+                <span class="brand-mark" aria-hidden="true">A</span>
+                <span><strong>Agri</strong>Admin<small>Hệ thống quản trị</small></span>
+            </a>
+
+            <nav class="side-nav">
+                <p class="nav-label">Quản lý dữ liệu</p>
+                <a class="nav-item active" href="index.html">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22V11m0 0C8.2 11 5 8 5 4c3.8 0 7 3 7 7Zm0 4c3.8 0 7-3 7-7-3.8 0-7 3-7 7Z"/></svg>
+                    <span>Cây trồng</span><span class="nav-count" id="crop-nav-count">—</span>
+                </a>
+                <a class="nav-item" href="diseases.html">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8.5h8M9 4l1.2 2.5M15 4l-1.2 2.5M6 11H3m18 0h-3M6.5 15 4 17m13.5-2 2.5 2M12 7c3.3 0 6 2.7 6 6v2a6 6 0 0 1-12 0v-2c0-3.3 2.7-6 6-6Z"/></svg>
+                    <span>Sâu bệnh</span><span class="nav-count" id="disease-nav-count">—</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="system-status"><span></span><div><strong>Hệ thống hoạt động</strong><small>Dữ liệu đồng bộ Firestore</small></div></div>
+                <div class="admin-profile"><span class="avatar">AD</span><div><strong>Quản trị viên</strong><small>Administrator</small></div></div>
+            </div>
+        </aside>
+
+        <div class="workspace">
+            <header class="topbar">
+                <div class="topbar-leading">
+                    <div><p class="eyebrow">Tổng quan quản trị</p><h1>Quản lý cây trồng</h1></div>
+                </div>
+                <div class="topbar-actions">
+                    <span class="live-pill"><span></span> Trực tuyến</span>
+                    <span class="top-avatar">AD</span>
+                </div>
+            </header>
+
+            <main class="content">
+                <!-- KHU VỰC THỐNG KÊ -->
+                <div class="stats-grid">
+                    <article class="stat-card green"><div class="stat-icon">🌱</div><div><span>Tổng cây trồng</span><strong id="crop-stat-count">—</strong><small>trong cơ sở dữ liệu</small></div></article>
+                    <article class="stat-card amber"><div class="stat-icon">✦</div><div><span>Nhóm cây</span><strong id="category-stat-count">6</strong><small>nhóm đang quản lý</small></div></article>
+                </div>
+
+                <!-- BẢNG DANH SÁCH CHIẾM TOÀN BỘ CHIỀU RỘNG -->
+                <section class="panel list-panel">
+                    <div class="panel-header">
+                        <div><h3>Danh sách cây trồng</h3><p>Tìm kiếm, lọc và quản lý dữ liệu cây trồng</p></div>
+                        <button type="button" id="new-crop-button" class="primary-button">+ Thêm cây trồng mới</button>
+                    </div>
+                    <div class="toolbar">
+                        <label class="search-field">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16.5 16.5 4 4"/></svg>
+                            <input type="search" id="search-input" placeholder="Tìm theo tên cây...">
+                        </label>
+                        <select id="category-filter" aria-label="Lọc nhóm cây">
+                            <option value="">Tất cả nhóm cây</option>
+                            <option value="staple_crops">Cây lương thực</option>
+                            <option value="industrial_crops">Cây công nghiệp</option>
+                            <option value="tropical_fruits">Cây ăn trái nhiệt đới</option>
+                            <option value="vegetables">Rau màu</option>
+                            <option value="herbs">Rau gia vị</option>
+                            <option value="timber_trees">Cây lấy gỗ</option>
+                        </select>
+                    </div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tên tiếng Việt</th>
+                                    <th>Tên tiếng Anh</th>
+                                    <th>Nhóm cây</th>
+                                    <th>Quốc gia đặc trưng</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="crop-list">
+                                <tr><td colspan="5" class="empty-cell">Đang tải dữ liệu...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel-footer"><p id="total-text">Đang tải danh sách...</p></div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- DIALOG BIỂU MẪU THÊM / SỬA -->
+    <dialog id="crop-dialog" class="form-dialog">
+        <div class="form-dialog-header">
+            <div><span class="form-kicker">Biểu mẫu</span><h3 id="form-title">Thêm cây trồng</h3><p>Điền thông tin bên dưới</p></div>
+            <button type="button" id="crop-dialog-close" class="dialog-close-btn" aria-label="Đóng">✕</button>
+        </div>
+        <div class="form-dialog-body">
+            <form id="crop-form">
+                <input type="hidden" id="crop-id">
+                <div class="form-group">
+                    <label for="crop-id-display">ID Document <span class="label-note">(tự động)</span></label>
+                    <input type="text" id="crop-id-display" placeholder="Firestore tự động tạo" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="name-vi">Tên tiếng Việt <span class="required">*</span></label>
+                    <input type="text" id="name-vi" placeholder="Ví dụ: Lúa nước" required>
+                </div>
+                <div class="form-group">
+                    <label for="name-en">Tên tiếng Anh <span class="required">*</span></label>
+                    <input type="text" id="name-en" placeholder="Ví dụ: Rice" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">Nhóm cây <span class="required">*</span></label>
+                    <select id="category" required>
+                        <option value="">Chọn nhóm cây</option>
+                        <option value="staple_crops">Cây lương thực</option>
+                        <option value="industrial_crops">Cây công nghiệp</option>
+                        <option value="tropical_fruits">Cây ăn trái nhiệt đới</option>
+                        <option value="vegetables">Rau màu</option>
+                        <option value="herbs">Rau gia vị</option>
+                        <option value="timber_trees">Cây lấy gỗ</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="signatureCountries">Quốc gia đặc trưng</label>
+                    <input type="text" id="signatureCountries" placeholder="Việt Nam, Trung Quốc...">
+                    <small>Phân cách nhiều quốc gia bằng dấu phẩy.</small>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" id="save-button" class="primary-button">Lưu cây trồng</button>
+                    <button type="button" id="cancel-button" class="secondary-button">Hủy</button>
+                </div>
+                <p id="message" class="form-message" role="status"></p>
+            </form>
+        </div>
+    </dialog>
+
+    <script type="module" src="../JS/crops.js"></script>
+</body>
+</html>
