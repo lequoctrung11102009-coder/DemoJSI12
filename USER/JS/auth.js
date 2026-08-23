@@ -9,9 +9,9 @@ import {
 
 import {
     doc,
-    getDoc
+    getDoc,
+    setDoc
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
-
 // khai báo phần tử từ HTML
 
 const emailInput = document.getElementById("txt-email");
@@ -72,11 +72,12 @@ if (btnRegister) {
 
 
             // Tạo hồ sơ user trong Firestore
+          // Tạo hồ sơ user trong Firestore
             await setDoc(
-                doc(db, "users", user.uid),
+                doc(db, "user", user.uid), // Đổi thành "user" (không s)
                 {
                     email: user.email,
-                    role: "user"
+                    roles: "user"          // Đổi thành "roles" (có s)
                 }
             );
 
@@ -126,40 +127,26 @@ if (btnLogin) {
             console.log("UID:", user.uid);
 
 
-            // ==========================================
+          // ==========================================
             // LẤY ROLE TỪ FIRESTORE
             // ==========================================
-
             const userDocument = doc(
                 db,
-                "user",
+                "user", // Phải là "user" (không s) để khớp với collection trong ảnh
                 user.uid
             );
 
-            const userSnapshot =
-                await getDoc(userDocument);
+            const userSnapshot = await getDoc(userDocument);
 
-
-            // Không tìm thấy document users
             if (!userSnapshot.exists()) {
-
-                alert(
-                    "Tài khoản chưa được phân quyền."
-                );
-
+                alert("Tài khoản chưa được phân quyền.");
                 await signOut(auth);
-
                 return;
             }
 
-
             // Lấy dữ liệu
-            const userData =
-                userSnapshot.data();
-
-            const role =
-                userData.roles;
-
+            const userData = userSnapshot.data();
+            const role = userData.roles; // Phải là "roles" (có s) để lấy được chữ "admin"
 
             // ==========================================
             // PHÂN QUYỀN
@@ -183,7 +170,7 @@ if (btnLogin) {
                 );
 
                 window.location.href =
-                    "../../HTML/Web_App.html";
+                    "Web_App.html";
 
             }
 
