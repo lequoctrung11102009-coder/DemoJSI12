@@ -63,29 +63,6 @@ async function getData() {
     document.getElementById('Humidity').innerHTML = `Humidity: ${data.main.humidity}%`;
     document.getElementById('speed').innerHTML = `Wind: ${data.wind.speed} km/h`;
 
-    const ifoResponse = await fetch(
-        `https://api.restcountries.com/countries/v5?q=${Cityname}&api-key=rc_live_802c161921a84fd4a37d4317848b653e`
-    );
-
-    const ifoData = await ifoResponse.json();
-
-    if (!ifoResponse.ok || !ifoData.data || !ifoData.data.objects || ifoData.data.objects.length == 0) {
-        document.getElementById('cName').innerHTML = `Không tìm thấy quốc gia: ${Cityname}`;
-        document.getElementById('cFlag').innerHTML = `---`;
-        document.getElementById('cCapital').innerHTML = `---`;
-        document.getElementById('cPopulation').innerHTML = `---`;
-        document.getElementById('cCurrency').innerHTML = `---`;
-        return;
-    }
-
-    const country = ifoData.data.objects[0];
-
-    document.getElementById('cName').innerHTML = country.names.common;
-    document.getElementById('cFlag').innerHTML = `<img src="${country.flag.url_png}" alt="flag">`;
-    document.getElementById('cCapital').innerHTML = country.capitals[0].name;
-    document.getElementById('cPopulation').innerHTML = country.population.toLocaleString('vi-VN');
-    document.getElementById('cCurrency').innerHTML = `${country.currencies[0].code} (${country.currencies[0].symbol})`;
-
     const assmentData = document.getElementById('assessment');
     const promotionData = document.getElementById('promotion');
     const plantData = document.getElementById('plant');
