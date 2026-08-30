@@ -79,6 +79,8 @@ svg {
     color: #fff;
     font: 700 18px/1.1 Manrope, sans-serif;
     text-decoration: none;
+    margin-bottom: 10px;
+    margin-right: 70px;
 }
 
 .brand strong {
@@ -105,6 +107,12 @@ svg {
     color: var(--forest);
     font: 800 21px Manrope, sans-serif;
     transform: rotate(-4deg);
+}
+.word-brand {
+  display: flex;
+    flex-direction: column;
+    margin-right: 100px;
+
 }
 
 .nav-label {
@@ -1042,3 +1050,8 @@ tbody tr:last-child td {
         transition-duration: .01ms !important;
     }
 }
+ .logo{
+            width: 60px;
+            height: auto;
+            margin-right: 8px;
+        }
