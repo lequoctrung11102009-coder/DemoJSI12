@@ -134,6 +134,18 @@
             font-size: 14px;
         }
 
+        .search-box select {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+            cursor: pointer;
+            background: #fff;
+            color: #222;
+        }
+
         .search-box button {
             width: 100%;
             padding: 12px;
@@ -256,7 +268,7 @@
                         <a class="nav-link" href="#">Nông nghiệp</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/USER/HTML/login.html">Logout</a>
+                        <a class="nav-link" href="/index.html">Quay về</a>
                     </li>
                 </ul>
             </div>
@@ -317,6 +329,40 @@
                 <div class="section-title">SEARCH</div>
                 <div class="search-box">
                     <input type="text" placeholder="Ví dụ: Vietnam, London..." id="cityName">
+
+                    <select id="asiaSelect">
+                        <option value="">-- Chọn quốc gia Châu Á --</option>
+                        <option value="Vietnam">Việt Nam</option>
+                        <option value="China">Trung Quốc</option>
+                        <option value="Japan">Nhật Bản</option>
+                        <option value="South Korea">Hàn Quốc</option>
+                        <option value="North Korea">Triều Tiên</option>
+                        <option value="India">Ấn Độ</option>
+                        <option value="Thailand">Thái Lan</option>
+                        <option value="Singapore">Singapore</option>
+                        <option value="Malaysia">Malaysia</option>
+                        <option value="Indonesia">Indonesia</option>
+                        <option value="Philippines">Philippines</option>
+                        <option value="Cambodia">Campuchia</option>
+                        <option value="Laos">Lào</option>
+                        <option value="Myanmar">Myanmar</option>
+                        <option value="Mongolia">Mông Cổ</option>
+                        <option value="Nepal">Nepal</option>
+                        <option value="Bangladesh">Bangladesh</option>
+                        <option value="Pakistan">Pakistan</option>
+                        <option value="Sri Lanka">Sri Lanka</option>
+                        <option value="Saudi Arabia">Ả Rập Xê Út</option>
+                        <option value="United Arab Emirates">UAE</option>
+                        <option value="Qatar">Qatar</option>
+                        <option value="Israel">Israel</option>
+                        <option value="Turkey">Thổ Nhĩ Kỳ</option>
+                        <option value="Iran">Iran</option>
+                        <option value="Iraq">Iraq</option>
+                        <option value="Kazakhstan">Kazakhstan</option>
+                        <option value="Uzbekistan">Uzbekistan</option>
+                        <option value="Taiwan">Đài Loan</option>
+                    </select>
+
                     <button id="btn">Tìm kiếm</button>
                 </div>
             </div>

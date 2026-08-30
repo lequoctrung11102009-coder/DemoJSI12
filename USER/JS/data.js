@@ -7,6 +7,8 @@ import {
     where
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 const btn = document.getElementById('btn');
+const asiaSelect = document.getElementById('asiaSelect');
+const cityInput = document.getElementById('cityName');
 
 function clearHTML(){
     document.getElementById('localTime').innerHTML = "...";
@@ -247,4 +249,17 @@ if (recSnap.empty) {
 
 
 btn.addEventListener('click', getData);
+
+// Khi chọn quốc gia từ dropdown Châu Á: điền vào ô input và tìm kiếm luôn
+asiaSelect.addEventListener('change', () => {
+    if (asiaSelect.value === "") return;
+    cityInput.value = asiaSelect.value;
+    getData();
+});
+
+// Khi người dùng tự gõ tay, đưa dropdown về trạng thái mặc định
+cityInput.addEventListener('input', () => {
+    asiaSelect.value = "";
+});
+
 getData();

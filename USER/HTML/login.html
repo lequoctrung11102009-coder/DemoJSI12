@@ -21,7 +21,7 @@ body{
     justify-content:center;
     align-items:center;
     min-height:100vh;
-    background:#4b6fe8;
+    background:#1f490a;
 }
 
 .container{
@@ -102,7 +102,7 @@ body{
 .divider{
     display:flex;
     align-items:center;
-    gap:10px;
+   
     margin:22px 0;
 }
 
@@ -140,22 +140,11 @@ body{
 .facebook i{
     font-size:18px;
 }
-
-.google{
-    background:#fff;
-    border:1px solid #ddd;
-    color:#555;
-}
-
-.google img{
-    width:18px;
-    height:18px;
-}
 </style>
 <body>
     <div class="container">
         <div class="login-box">
-            <h2>Login</h2>
+            <h2>Login for admin</h2>
 
             <input type="email" placeholder="Email" id="txt-email">
 
@@ -163,30 +152,31 @@ body{
                 <input type="password" placeholder="Password" id="txt-password">
             </div>
 
-            <a href="#" class="forgot">Forgot password?</a>
+           
 
             <button class="login-btn" id="btn-login">Login</button>
 
-            <p class="signup" id="">
-                Don't have an account?
-                <a href="register.html">Signup</a>
-            </p>
+           
 
             <div class="divider">
                 <span></span>
-                <p>Or</p>
+                <p>If you aren't an admin.</p>
+               
                 <span></span>
+                
             </div>
+             <div class="divider">
+                <span></span>
+                <p>Please! Click the button below to login as a user.</p>
+               
+                <span></span>
+                
+            </div>
+            <a href="/USER/HTML/Web_App.html"><button class="facebook"  id="fbButton">
+                I'm User
+            </button></a>
 
-            <button class="facebook"  id="fbButton">
-                <i class="fa-brands fa-facebook"></i>
-                Login with Facebook
-            </button>
-
-            <button class="google" id="ggButton">
-                <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png">
-                Login with Google
-            </button>
+        
         </div>
     </div>
     <script type="module" src="../JS/auth.js"></script>
