@@ -132,7 +132,7 @@ if (btnLogin) {
             // ==========================================
             const userDocument = doc(
                 db,
-                "user", // Phải là "user" (không s) để khớp với collection trong ảnh
+                "user",
                 user.uid
             );
 
@@ -146,7 +146,7 @@ if (btnLogin) {
 
             // Lấy dữ liệu
             const userData = userSnapshot.data();
-            const role = userData.roles; // Phải là "roles" (có s) để lấy được chữ "admin"
+            const role = userData.roles; 
 
             // ==========================================
             // PHÂN QUYỀN
