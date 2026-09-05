@@ -1,7 +1,3 @@
-// ======================================================
-// DISEASES.JS — Quản lý sâu bệnh (Viết lại siêu cơ bản)
-// ======================================================
-
 import {
     db,
     diseasesCollection,
@@ -14,7 +10,7 @@ import {
     serverTimestamp
 } from "./firebase-config.js";
 
-// ── DOM Elements (Lấy các thẻ HTML) ─────────────────────
+
 const diseaseDialog      = document.getElementById("disease-dialog");
 const newDiseaseButton   = document.getElementById("new-disease-button");
 const dialogCloseButton  = document.getElementById("disease-dialog-close");
@@ -33,12 +29,12 @@ const searchInput        = document.getElementById("disease-search");
 const totalText          = document.getElementById("disease-total-text");
 const cropIdOptions      = document.getElementById("crop-id-options");
 
-// Biến lưu trữ dữ liệu
-let diseases = [];      // Mảng chứa danh sách sâu bệnh
-let cropsMap = {};      // Chứa tên cây trồng (để ghép với mã cây)
-let currentEditId = null; // Lưu ID của sâu bệnh đang được sửa
 
-// ── Quản lý mở / đóng Cửa sổ nhập liệu (Dialog) ─────────
+let diseases = [];      
+let cropsMap = {};      
+let currentEditId = null;
+
+// (Dialog)
 function openDiseaseDialog() {
     if (diseaseDialog && diseaseDialog.open === false) {
         diseaseDialog.showModal();
@@ -56,13 +52,13 @@ function showMessage(text, isError = false) {
     if (!message) return;
     message.textContent = text;
     if (isError === true) {
-        message.style.color = "#d93838"; // Màu đỏ
+        message.style.color = "#d93838"; 
     } else {
-        message.style.color = "#24734f"; // Màu xanh
+        message.style.color = "#24734f"; 
     }
 }
 
-// ── Ngăn chặn lỗi hiển thị mã HTML bậy bạ ───────────────
+// ── Ngăn chặn lỗi hiển thị mã HTML bậy  ───────────────
 function escapeHtml(text) {
     if (!text) return "";
     const div = document.createElement("div");
@@ -70,7 +66,7 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// ── Dọn sạch Form nhập liệu ─────────────────────────────
+// ── Dọn sạch Form  
 function resetDiseaseForm() {
     currentEditId = null;
     if (diseaseIdInput) { 
@@ -87,20 +83,20 @@ function resetDiseaseForm() {
     showMessage("");
 }
 
-// ── Tải danh sách cây trồng (Để ghép tên vào bảng) ──────
+// ── Tải danh sách cây trồng 
 async function loadCropsMap() {
     try {
         const snapshot = await getDocs(cropsCollection);
         cropsMap = {}; 
         if (cropIdOptions) cropIdOptions.innerHTML = "";
 
-        // DÙNG VÒNG LẶP FOR THAY VÌ forEach
+       
         let listDocs = snapshot.docs;
         for (let i = 0; i < listDocs.length; i++) {
             let docSnap = listDocs[i];
             let data = docSnap.data();
             
-            // Lấy tên cây (Ưu tiên tiếng Việt, không có thì tiếng Anh, không có nữa thì lấy ID)
+            // Lấy tên cây 
             let cropName = "";
             if (data.name_vi) {
                 cropName = data.name_vi;
@@ -126,25 +122,23 @@ async function loadCropsMap() {
     }
 }
 
-// ── 1. READ: Lấy danh sách sâu bệnh từ Firebase ─────────
+// Lấy danh sách sâu bệnh từ Firebase ─────────
 async function loadDiseases() {
     if (diseaseTableBody) {
         diseaseTableBody.innerHTML = `<tr><td colspan="6" class="empty-cell">Đang tải dữ liệu...</td></tr>`;
     }
 
-    await loadCropsMap(); // Đợi tải cây trồng xong mới tải sâu bệnh
+    await loadCropsMap(); 
 
     try {
         const snapshot = await getDocs(diseasesCollection);
-        diseases = []; // Làm rỗng mảng cũ
-
-        // DÙNG VÒNG LẶP FOR KHUI TỪNG KIỆN HÀNG
+        diseases = []; 
         let listDocs = snapshot.docs;
         for (let i = 0; i < listDocs.length; i++) {
             let docSnap = listDocs[i];
             let data = docSnap.data();
-            data.id = docSnap.id; // Gắn ID vào
-            diseases.push(data);  // Đưa vào mảng
+            data.id = docSnap.id; 
+            diseases.push(data);  
         }
 
         displayDiseases(diseases);
@@ -159,14 +153,14 @@ async function loadDiseases() {
 // ── Vẽ dữ liệu ra bảng HTML ─────────────────────────────
 function displayDiseases(danhSachHienThi) {
     if (!diseaseTableBody) return;
-    diseaseTableBody.innerHTML = ""; // Xóa bảng cũ
+    diseaseTableBody.innerHTML = ""; 
 
     if (danhSachHienThi.length === 0) {
         diseaseTableBody.innerHTML = `<tr><td colspan="6" class="empty-cell">Chưa có dữ liệu.</td></tr>`;
         return;
     }
 
-    // Đếm thủ công bằng vòng lặp (thay cho hàm .filter phức tạp)
+   
     let totalCount = danhSachHienThi.length;
     let highRiskCount = 0;
     let solutionCount = 0;
@@ -174,12 +168,12 @@ function displayDiseases(danhSachHienThi) {
     for (let i = 0; i < danhSachHienThi.length; i++) {
         let benh = danhSachHienThi[i];
         
-        // Kiểm tra xem có phải rủi ro cao không
+      
         if (benh.risk_level === "high" || benh.risk_level === "High") {
             highRiskCount = highRiskCount + 1;
         }
         
-        // Kiểm tra xem đã có giải pháp chưa
+      
         if (benh.solution && benh.solution !== "") {
             solutionCount = solutionCount + 1;
         }
@@ -189,20 +183,18 @@ function displayDiseases(danhSachHienThi) {
     const totalTextEl = document.getElementById("disease-total-text");
     if (totalTextEl) totalTextEl.textContent = "Tổng số sâu bệnh: " + totalCount;
 
-    // Dùng vòng lặp for để vẽ từng dòng (thay vì forEach)
     for (let i = 0; i < danhSachHienThi.length; i++) {
         let disease = danhSachHienThi[i];
         let row = document.createElement("tr");
 
-        // 1. TÌM TÊN CÂY TRỒNG (Thay cho toán tử 3 ngôi ? :)
         let cropNameHTML = "";
         let foundCropName = cropsMap[disease.crop_id];
         
         if (foundCropName) {
-            // Nếu tìm thấy tên cây trong kho
+          
             cropNameHTML = escapeHtml(foundCropName) + ` <small style="color:#888;">(${escapeHtml(disease.crop_id)})</small>`;
         } else {
-            // Nếu không tìm thấy
+         
             if (disease.crop_id) {
                 cropNameHTML = escapeHtml(disease.crop_id);
             } else {
@@ -210,7 +202,7 @@ function displayDiseases(danhSachHienThi) {
             }
         }
 
-        // 2. CHỌN MÀU CẢNH BÁO RỦI RO
+       
         let riskBadge = `<span class="risk-badge risk-low">Thấp</span>`;
         if (disease.risk_level === "medium" || disease.risk_level === "Medium") {
             riskBadge = `<span class="risk-badge risk-medium">Trung bình</span>`;
@@ -218,12 +210,11 @@ function displayDiseases(danhSachHienThi) {
             riskBadge = `<span class="risk-badge risk-high">Cao</span>`;
         }
 
-        // 3. XỬ LÝ DỮ LIỆU RỖNG
+      
         let maBenh = disease.disease_id || disease.id; // Không có mã tự đặt thì lấy mã Firebase
         let tenBenh = disease.name || "Chưa có tên";
         let giaiPhap = disease.solution || "Chưa có giải pháp";
 
-        // 4. VẼ HTML
         row.innerHTML = `
             <td><code>${escapeHtml(maBenh)}</code></td>
             <td>${cropNameHTML}</td>
@@ -241,7 +232,6 @@ function displayDiseases(danhSachHienThi) {
     }
 }
 
-// ── 2. CREATE / UPDATE: Lưu dữ liệu lên Firebase ────────
 async function saveDisease(e) {
     e.preventDefault(); // Chặn trang web tự tải lại khi bấm Submit
 
@@ -318,7 +308,7 @@ async function removeDisease(docId) {
 
 // ── Chuẩn bị dữ liệu đưa lên Form để Sửa ────────────────
 function startEditDisease(docId) {
-    // Tìm dữ liệu bằng vòng lặp for (thay cho .find)
+  
     let diseaseToEdit = null;
     for (let i = 0; i < diseases.length; i++) {
         if (diseases[i].id === docId) {
@@ -351,12 +341,12 @@ function startEditDisease(docId) {
     openDiseaseDialog();
 }
 
-// ── Tìm kiếm ────────────────────────────────────────────
+
 function searchDiseases() {
     let tuKhoa = searchInput.value.toLowerCase().trim();
     let ketQuaTimKiem = []; // Tạo một giỏ rỗng chứa kết quả
 
-    // Dùng vòng lặp for thay cho hàm .filter
+    
     for (let i = 0; i < diseases.length; i++) {
         let benh = diseases[i];
         
@@ -382,7 +372,7 @@ function searchDiseases() {
     displayDiseases(ketQuaTimKiem); 
 }
 
-// ── LẮNG NGHE SỰ KIỆN KHI BẤM NÚT ───────────────────────
+// SỰ KIỆN KHI BẤM NÚT
 if (newDiseaseButton) {
     newDiseaseButton.addEventListener("click", function() {
         resetDiseaseForm();
